@@ -1,0 +1,92 @@
+:root {
+  --bg: #faf7f2;
+  --surface: #ffffff;
+  --text: #2c2c2c;
+  --text-muted: #8a8a8a;
+  --border: #e8e2d9;
+  --shadow: rgba(44, 44, 44, 0.06);
+  
+  /* Mode accents - default to Couple (cherry red) */
+  --accent: #c0392b; 
+  --accent-couple: #c0392b;
+  --accent-family: #d35400;
+  --accent-crew: #4a6fa5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--bg);
+  position: relative;
+}
+
+/* Landing Page Styles */
+.landing-container {
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.landing-container h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+
+.landing-container p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 400px;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+#google-btn-wrapper {
+  margin-bottom: 40px;
+  height: 44px; /* prevents layout shift */
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+}

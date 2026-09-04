@@ -1,11 +1,12 @@
+// Must come first: ES module imports are evaluated before any statement in this
+// file runs, so a plain dotenv.config() call down here would execute AFTER the
+// route modules below had already read process.env and thrown.
+import 'dotenv/config';
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-// Load environment variables
-dotenv.config();
 
 // Create __dirname equivalent for ES Modules
 const __filename = fileURLToPath(import.meta.url);

@@ -95,6 +95,20 @@ while the integration looks like it is working. Turning the flag on before
 registering means believing you are collecting tax when you are not, and past
 transactions **cannot be corrected retroactively**.
 
+This was measured against this account, not assumed. With `automatic_tax`
+enabled today, `checkout.sessions.create` **succeeds**:
+
+```
+automatic_tax.status : requires_location_inputs
+amount_total         : 399
+amount_tax           : 0
+```
+
+The session is created, the customer is charged, and zero tax is collected — no
+error anywhere. (The Tax Calculations API does error, with "You must have a valid
+head office address", but Checkout does not.) That silent success is the whole
+reason the flag exists.
+
 1. Set a head office address: **Dashboard → Tax → Settings**. Until this is set,
    settings `status` is `pending` and `automatic_tax` calculates nothing.
 2. Add a registration for each jurisdiction you are obligated to collect in

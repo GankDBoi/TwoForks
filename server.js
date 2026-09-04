@@ -32,13 +32,19 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Two Forks API is running' });
 });
 
-// Import and mount routes (To be implemented)
-// import authRoutes from './routes/auth.js';
-// import bookRoutes from './routes/books.js';
-// import billingRoutes from './routes/billing.js';
-// app.use('/api/auth', authRoutes);
-// app.use('/api/books', bookRoutes);
-// app.use('/api/billing', billingRoutes);
+import authRoutes from './routes/auth.js';
+import bookRoutes from './routes/books.js';
+import restaurantRoutes from './routes/restaurants.js';
+import dishRoutes from './routes/dishes.js';
+import ratingRoutes from './routes/ratings.js';
+import decideRoutes from './routes/decide.js';
+
+app.use('/api/auth', authRoutes);
+app.use('/api/books', bookRoutes);
+app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/dishes', dishRoutes);
+app.use('/api/ratings', ratingRoutes);
+app.use('/api/decide', decideRoutes);
 
 // Fallback to index.html for SPA routing
 app.get('*', (req, res) => {

@@ -1,0 +1,5 @@
+node_modules
+.env
+two-forks.db
+two-forks.db-journal
+.DS_Store

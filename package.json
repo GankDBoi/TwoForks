@@ -1,0 +1,22 @@
+{
+  "name": "two-forks",
+  "version": "1.0.0",
+  "description": "A shared book of the dishes you and your person actually loved.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "google-auth-library": "^9.10.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^5.0.7",
+    "stripe": "^16.0.0"
+  }
+}

@@ -15,10 +15,28 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Enable CORS
+import authRoutes from './routes/auth.js';
+import bookRoutes from './routes/books.js';
+import restaurantRoutes from './routes/restaurants.js';
+import dishRoutes from './routes/dishes.js';
+import ratingRoutes from './routes/ratings.js';
+import decideRoutes from './routes/decide.js';
+import billingRoutes from './routes/billing.js';
+
 app.use(cors());
 
+import authRoutes from './routes/auth.js';
+import bookRoutes from './routes/books.js';
+import restaurantRoutes from './routes/restaurants.js';
+import dishRoutes from './routes/dishes.js';
+import ratingRoutes from './routes/ratings.js';
+import decideRoutes from './routes/decide.js';
+import billingRoutes from './routes/billing.js';
+import webhookRoute from './routes/webhook.js';
+
 // Webhook endpoint needs raw body to verify Stripe signature
-// app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
+// Must be mounted BEFORE express.json()
+app.use('/api/billing/webhook', express.raw({ type: 'application/json' }), webhookRoute);
 
 // Middleware for parsing JSON (for all other routes)
 app.use(express.json());
@@ -32,19 +50,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Two Forks API is running' });
 });
 
-import authRoutes from './routes/auth.js';
-import bookRoutes from './routes/books.js';
-import restaurantRoutes from './routes/restaurants.js';
-import dishRoutes from './routes/dishes.js';
-import ratingRoutes from './routes/ratings.js';
-import decideRoutes from './routes/decide.js';
-
 app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/dishes', dishRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api/decide', decideRoutes);
+app.use('/api/billing', billingRoutes);
 
 // Fallback to index.html for SPA routing
 app.get('*', (req, res) => {

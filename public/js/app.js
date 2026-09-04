@@ -1,5 +1,6 @@
 import { renderLanding } from './views/landing.js';
 import { renderDashboard } from './views/dashboard.js';
+import { renderBook } from './views/book.js';
 
 const appDiv = document.getElementById('app');
 
@@ -32,6 +33,19 @@ window.logout = () => {
   window.location.hash = '#';
 };
 
+export async function apiFetch(endpoint, options = {}) {
+  const token = localStorage.getItem('token');
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  
+  const res = await fetch(endpoint, { ...options, headers });
+  if (res.status === 401) {
+    window.logout();
+    throw new Error('Unauthorized');
+  }
+  return res;
+}
+
 // Router
 function route() {
   const hash = window.location.hash || '#';
@@ -52,20 +66,15 @@ function route() {
   // Clear current view
   appDiv.innerHTML = '';
 
-  switch(hash) {
-    case '#':
-      renderLanding(appDiv);
-      break;
-    case '#dashboard':
-      renderDashboard(appDiv);
-      break;
-    default:
-      if (hash.startsWith('#book/')) {
-        // Will implement book detail view later
-        appDiv.innerHTML = '<h2>Book Detail</h2><button onclick="window.location.hash=\'#dashboard\'">Back</button>';
-      } else {
-        renderLanding(appDiv);
-      }
+  if (hash === '#') {
+    renderLanding(appDiv);
+  } else if (hash === '#dashboard') {
+    renderDashboard(appDiv);
+  } else if (hash.startsWith('#book/')) {
+    const bookId = hash.split('/')[1];
+    renderBook(appDiv, bookId);
+  } else {
+    renderLanding(appDiv);
   }
 }
 

@@ -92,9 +92,30 @@ export async function initDb() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Billing columns and the webhook dedup log. Kept as separate idempotent
+    // statements so existing databases pick them up too — the CREATE TABLE
+    // block above is a no-op once the tables exist.
+    await client.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS current_period_end TIMESTAMP;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_lifetime BOOLEAN NOT NULL DEFAULT false;
+
+      CREATE UNIQUE INDEX IF NOT EXISTS users_stripe_customer_id_key
+        ON users (stripe_customer_id) WHERE stripe_customer_id IS NOT NULL;
+
+      -- Stripe retries any non-2xx delivery, so handlers must be replay-safe.
+      CREATE TABLE IF NOT EXISTS processed_stripe_events (
+        id TEXT PRIMARY KEY,
+        type TEXT NOT NULL,
+        processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     console.log('Postgres Database initialized successfully.');
   } catch (err) {
-    console.error('Error initializing database:', err);
+    console.error("Error initializing database:", err);
+    throw err; // a half-applied migration must not look like a successful boot
   } finally {
     client.release();
   }

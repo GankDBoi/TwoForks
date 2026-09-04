@@ -2,6 +2,11 @@ import express from 'express';
 import { customAlphabet } from 'nanoid';
 import db from '../db/schema.js';
 import { requireAuth } from '../middleware/auth.js';
+import {
+  requireMode,
+  enforceBookLimit,
+  enforceMemberLimit,
+} from '../middleware/entitlements.js';
 
 const router = express.Router();
 // 6-character alphanumeric invite code (removed ambiguous characters like O, 0, I, l)
@@ -25,7 +30,7 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // POST /api/books - Create a new book
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', requireAuth, requireMode, enforceBookLimit, async (req, res) => {
   const { name, mode } = req.body;
   if (!name) return res.status(400).json({ error: 'Book name is required' });
   
@@ -58,7 +63,7 @@ router.post('/', requireAuth, async (req, res) => {
 });
 
 // POST /api/books/join - Join a book using an invite code
-router.post('/join', requireAuth, async (req, res) => {
+router.post('/join', requireAuth, enforceMemberLimit, async (req, res) => {
   const { invite_code } = req.body;
   if (!invite_code) return res.status(400).json({ error: 'Invite code is required' });
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import db from '../db/schema.js';
 import { requireAuth } from '../middleware/auth.js';
+import { enforceDishLimit } from '../middleware/entitlements.js';
 
 const router = express.Router();
 
@@ -40,7 +41,7 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // POST /api/dishes
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', requireAuth, enforceDishLimit, async (req, res) => {
   const { restaurant_id, name, price_range } = req.body;
   
   if (!restaurant_id || !name) return res.status(400).json({ error: 'restaurant_id and name are required' });

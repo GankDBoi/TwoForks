@@ -1,6 +1,7 @@
 import express from 'express';
 import db from '../db/schema.js';
 import { requireAuth } from '../middleware/auth.js';
+import { enforcePlaceLimit } from '../middleware/entitlements.js';
 
 const router = express.Router({ mergeParams: true }); // allows accessing :bookId from parent router if needed
 
@@ -23,7 +24,7 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // POST /api/restaurants
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', requireAuth, enforcePlaceLimit, async (req, res) => {
   const { book_id, name, address, lat, lon, cuisine, notes } = req.body;
   
   if (!book_id || !name) return res.status(400).json({ error: 'book_id and name are required' });

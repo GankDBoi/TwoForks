@@ -23,23 +23,30 @@ router.post('/google', async (req, res) => {
     const { sub: google_id, email, name: display_name, picture: avatar_url } = payload;
 
     // Check if user exists
-    let user = db.prepare('SELECT * FROM users WHERE google_id = ?').get(google_id);
+    const userRes = await db.query('SELECT * FROM users WHERE google_id = $1', [google_id]);
+    let user = userRes.rows[0];
 
     if (!user) {
       // Check if email already exists but not linked to google_id (edge case)
-      const existingEmail = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+      const existingEmailRes = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+      const existingEmail = existingEmailRes.rows[0];
+      
       if (existingEmail) {
         // Link google account
-        db.prepare('UPDATE users SET google_id = ?, avatar_url = ? WHERE id = ?').run(google_id, avatar_url, existingEmail.id);
-        user = db.prepare('SELECT * FROM users WHERE id = ?').get(existingEmail.id);
+        await db.query(
+          'UPDATE users SET google_id = $1, avatar_url = $2 WHERE id = $3',
+          [google_id, avatar_url, existingEmail.id]
+        );
+        const updatedRes = await db.query('SELECT * FROM users WHERE id = $1', [existingEmail.id]);
+        user = updatedRes.rows[0];
       } else {
         // Create new user
-        const result = db.prepare(`
+        const insertRes = await db.query(`
           INSERT INTO users (google_id, email, display_name, avatar_url)
-          VALUES (?, ?, ?, ?)
-        `).run(google_id, email, display_name, avatar_url);
+          VALUES ($1, $2, $3, $4) RETURNING *
+        `, [google_id, email, display_name, avatar_url]);
         
-        user = db.prepare('SELECT * FROM users WHERE id = ?').get(result.lastInsertRowid);
+        user = insertRes.rows[0];
       }
     }
 
